@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@color/black"
+    app:cardCornerRadius="@dimen/radius_cards"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.65"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_small">
+
+            <TextView
+                android:id="@+id/txt_title_movie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/margins_small"
+                android:textColor="@color/white"
+                android:textSize="@dimen/titles"
+                tools:text="The Minions" />
+
+            <TextView
+                android:id="@+id/txt_description_movie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:maxLength="50"
+                android:textColor="@color/white"
+                tools:text="Description of Movie" />
+
+            <TextView
+                android:id="@+id/txt_rating_movie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:maxLength="12"
+                android:textColor="@color/white"
+                tools:text="Rating of Movie" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivMovie"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/height_image"
+            android:layout_marginStart="@dimen/margins_big"
+            android:layout_marginTop="@dimen/margins_medium"
+            android:layout_marginBottom="@dimen/margins_small"
+            android:layout_weight="0.35"
+            android:contentDescription="@string/img_description"
+            android:scaleType="fitXY" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

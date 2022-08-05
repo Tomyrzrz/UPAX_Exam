@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "164026735523",
+    "project_id": "upaxmoviesapi",
+    "storage_bucket": "upaxmoviesapi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:164026735523:android:361710144ffb2c70e35816",
+        "android_client_info": {
+          "package_name": "com.softim.moviesapi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "164026735523-400i9r88fikk02f3s4tt6bjdte7bkdsh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.softim.moviesapi",
+            "certificate_hash": "3a2d38d1d7f82aa1975cf3e395199d69aeec12be"
+          }
+        },
+        {
+          "client_id": "164026735523-1fo8r6gngvh836renl7c43lv95f20o2q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHseTiuG94tkJoXaV13nMze2GE3pnyTug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "164026735523-1fo8r6gngvh836renl7c43lv95f20o2q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
