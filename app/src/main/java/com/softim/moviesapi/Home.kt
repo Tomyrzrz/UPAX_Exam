@@ -1,6 +1,7 @@
 package com.softim.moviesapi
 
 import android.Manifest
+import android.R.attr.delay
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -29,6 +30,7 @@ import com.softim.moviesapi.models.ModelUserLocation
 import com.softim.moviesapi.utilities.ExceptionDialogFragment
 import java.util.*
 
+
 class Home : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -39,6 +41,8 @@ class Home : AppCompatActivity() {
     private lateinit var ref: DocumentReference
     private val TIEMPO = 300000L
     private var handler = Handler()
+    var runnable: Runnable? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +50,6 @@ class Home : AppCompatActivity() {
         setContentView(binding.root)
 
         ubicacion()
-        ejecutarTarea()
-
         setSupportActionBar(binding.appBarHome.toolbar)
 
         binding.appBarHome.fab.setOnClickListener { view ->
@@ -110,15 +112,21 @@ class Home : AppCompatActivity() {
             Manifest.permission.READ_EXTERNAL_STORAGE))
     }
 
+    override fun onResume() {
+        ejecutarTarea()
+        super.onResume()
+    }
 
+    override fun onDestroy() {
+        handler.removeCallbacks(runnable!!)
+        super.onDestroy()
+    }
 
     private fun ejecutarTarea() {
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                ubicacion()
-                handler.postDelayed(this, TIEMPO)
-            }
-        }, TIEMPO)
+        handler.postDelayed(Runnable {
+            ubicacion()
+            handler.postDelayed(runnable!!, delay.toLong())
+        }.also { runnable = it }, delay.toLong())
     }
 
     private fun notificar() {
