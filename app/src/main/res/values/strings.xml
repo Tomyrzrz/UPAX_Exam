@@ -10,6 +10,8 @@
     </string-array>
     <string name="exception_error">We have a Error</string>
     <string name="ok">Ok</string>
+    <string name="channel_name">Notification Movies</string>
+    <string name="channel_description">Notifications of Location Of Users</string>
 
     <string name="title_activity_home">Home</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>

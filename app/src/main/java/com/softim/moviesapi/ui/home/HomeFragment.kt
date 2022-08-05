@@ -10,13 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.softim.moviesapi.databinding.FragmentHomeBinding
 import com.softim.moviesapi.models.Model_movie
 import com.softim.moviesapi.utilities.APIservice
+import com.softim.moviesapi.utilities.ExceptionDialogFragment
 import com.softim.moviesapi.utilities.MoviesAdapter
 import com.softim.moviesapi.utilities.MoviesLocalBD
 import kotlinx.coroutines.CoroutineScope
@@ -43,15 +43,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        /*val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)*/
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        /*val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }*/
         return root
     }
 
@@ -124,8 +118,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
                         moviesImages.addAll(pelis)
                         adapter.notifyDataSetChanged()
                     } else {
-                        Toast.makeText(requireContext(), "We have an error", Toast.LENGTH_LONG)
-                            .show()
+                        val message = "We have an error"
+                        ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
                     }
                 }
             }
@@ -144,7 +138,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
                     adapter.notifyDataSetChanged()
                 } while (fila.moveToNext())
             }else{
-                Toast.makeText(requireContext(), "No Network. Connect to Internet", Toast.LENGTH_SHORT).show()
+                val message = "No Network. Connect to Internet"
+                ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
             }
             bd.close()
         }
@@ -157,6 +152,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        Toast.makeText(requireContext(), "Select Breed of Dog.", Toast.LENGTH_LONG).show()
+        val message = "Select Breed of Dog."
+        ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
     }
 }

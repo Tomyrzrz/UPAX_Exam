@@ -54,10 +54,15 @@ class GalleryFragment : Fragment() {
         binding.btnUploadPhoto.setOnClickListener {
             if (filePath != null)
                 uploadImage()
-            else
-                Toast.makeText(requireContext(), "First Select An Image", Toast.LENGTH_SHORT).show()
+            else {
+                val message = "Firts Select An Image."
+                ExceptionDialogFragment(message).show(
+                    parentFragmentManager,
+                    ExceptionDialogFragment.TAG
+                )
+            }
         }
-        return root
+            return root
     }
 
     private fun selectImage() {
@@ -103,23 +108,13 @@ class GalleryFragment : Fragment() {
                 .addOnSuccessListener { // Image uploaded successfully
                     // Dismiss dialog
                     progressDialog.dismiss()
-                    Toast
-                        .makeText(
-                            requireContext(),
-                            "Image Uploaded Correctly.",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
+                    val message = "Image Uploaded."
+                    ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
                 }
                 .addOnFailureListener { e -> // Error, Image not uploaded
                     progressDialog.dismiss()
-                    Toast
-                        .makeText(
-                            requireContext(),
-                            "Failed " + e.message,
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
+                    val message = "Failed: ${e.message}"
+                    ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
                 }
                 .addOnProgressListener(
                     object : OnProgressListener<UploadTask.TaskSnapshot?> {

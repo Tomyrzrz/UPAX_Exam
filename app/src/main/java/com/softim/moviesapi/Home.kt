@@ -2,6 +2,9 @@ package com.softim.moviesapi
 
 import android.Manifest
 import android.R.attr.delay
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -11,6 +14,8 @@ import android.view.Menu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
@@ -41,14 +46,14 @@ class Home : AppCompatActivity() {
     private lateinit var ref: DocumentReference
     private val TIEMPO = 300000L
     private var handler = Handler()
-    var runnable: Runnable? = null
-
+    private var runnable: Runnable? = null
+    private val CHANNEL_ID = "MOVIESAPI"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        createNotificationChannel()
         ubicacion()
         setSupportActionBar(binding.appBarHome.toolbar)
 
@@ -125,8 +130,8 @@ class Home : AppCompatActivity() {
     private fun ejecutarTarea() {
         handler.postDelayed(Runnable {
             ubicacion()
-            handler.postDelayed(runnable!!, delay.toLong())
-        }.also { runnable = it }, delay.toLong())
+            handler.postDelayed(runnable!!, TIEMPO)
+        }.also { runnable = it }, TIEMPO)
     }
 
     private fun notificar() {
@@ -139,26 +144,50 @@ class Home : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_movies", MODE_PRIVATE)
         val user_local = sharedPreferences.getString("user", "")
         val uniqueID = UUID.randomUUID().toString()
-        if (user_local == ""){
+        if (user_local == "") {
             val editor = sharedPreferences.edit()
             editor.putString("user", uniqueID)
             editor.apply()
             ref = bd.collection("moviesAPIuser").document(uniqueID)
                 .collection("locations").document()
-        }else{
+        } else {
             ref = bd.collection("moviesAPIuser").document(user_local!!)
                 .collection("locations").document()
         }
 
-        val user = ModelUserLocation(uniqueID,location!!.latitude, location.longitude)
+        val user = ModelUserLocation(uniqueID, location!!.latitude, location.longitude)
         ref.set(user)
             .addOnSuccessListener {
-                val message = "This is your location. \nLatitude: ${location.latitude} \nLongitude: ${location.longitude}"
-                ExceptionDialogFragment(message).show(fm, ExceptionDialogFragment.TAG)
+                val message = "Right now you are. \nLatitude: ${location.latitude} \nLongitude: ${location.longitude}"
+                notificationLocation(message)
             }.addOnFailureListener {
                 val message = "Upload Location Failed"
-                ExceptionDialogFragment(message).show(fm, ExceptionDialogFragment.TAG)
+                notificationLocation(message)
             }
+    }
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun notificationLocation(msj: String){
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("Your Location")
+            .setContentText(msj)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+        with(NotificationManagerCompat.from(this)) {
+            notify(2, builder.build())
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
