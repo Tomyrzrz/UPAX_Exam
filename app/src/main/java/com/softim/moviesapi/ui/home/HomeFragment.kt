@@ -1,5 +1,6 @@
 package com.softim.moviesapi.ui.home
 
+import android.content.ContentValues
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -17,6 +18,7 @@ import com.softim.moviesapi.databinding.FragmentHomeBinding
 import com.softim.moviesapi.models.Model_movie
 import com.softim.moviesapi.utilities.APIservice
 import com.softim.moviesapi.utilities.MoviesAdapter
+import com.softim.moviesapi.utilities.MoviesLocalBD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -107,6 +109,17 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
                 activity?.runOnUiThread {
                     if (call.isSuccessful) {
                         val pelis = list_movies?.movies ?: emptyList()
+                        val admin = MoviesLocalBD(requireContext(),"movies_local", null, 1)
+                        val bd = admin.writableDatabase
+                        for (pel in pelis){
+                            val registro = ContentValues()
+                            registro.put("title", pel.title)
+                            registro.put("overview", pel.overview)
+                            registro.put("poster_path", pel.poster_path)
+                            registro.put("vote_average", pel.vote_average)
+                            bd.insert("peliculas", null, registro)
+                        }
+                        bd.close()
                         moviesImages.clear()
                         moviesImages.addAll(pelis)
                         adapter.notifyDataSetChanged()
@@ -116,7 +129,26 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
                     }
                 }
             }
+        }else{
+            val admin = MoviesLocalBD(requireContext(),"movies_local", null, 1)
+            val bd = admin.writableDatabase
+            val fila = bd.rawQuery("select title, overview, poster_path, vote_average from peliculas", null)
+            if (fila.moveToFirst()) {
+                do {
+                    val title: String = fila.getString(0)
+                    val overview: String = fila.getString(1)
+                    val poster_path: String = fila.getString(2)
+                    val vote_average: Double = fila.getDouble(3)
+                    val movie = Model_movie(title, overview, poster_path, vote_average)
+                    moviesImages.add(movie)
+                    adapter.notifyDataSetChanged()
+                } while (fila.moveToNext())
+            }else{
+                Toast.makeText(requireContext(), "No Network. Connect to Internet", Toast.LENGTH_SHORT).show()
+            }
+            bd.close()
         }
+
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
