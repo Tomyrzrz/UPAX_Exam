@@ -23,7 +23,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -32,9 +31,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.softim.moviesapi.R
 import com.softim.moviesapi.databinding.FragmentHomeBinding
-import com.softim.moviesapi.models.ModelUserLocation
-import com.softim.moviesapi.models.Model_movie
-import com.softim.moviesapi.utilities.APIservice
+import com.softim.moviesapi.data.models.ModelUserLocation
+import com.softim.moviesapi.data.models.Model_movie
+import com.softim.moviesapi.data.network.APIservice
 import com.softim.moviesapi.utilities.ExceptionDialogFragment
 import com.softim.moviesapi.utilities.MoviesAdapter
 import com.softim.moviesapi.utilities.MoviesLocalBD

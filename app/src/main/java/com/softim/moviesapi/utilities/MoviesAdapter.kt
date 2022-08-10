@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.softim.moviesapi.R
 import com.softim.moviesapi.databinding.ItemMovieBinding
-import com.softim.moviesapi.models.Model_movie
+import com.softim.moviesapi.data.models.Model_movie
 import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONObject
@@ -24,7 +24,7 @@ class MoviesAdapter(val images: List<Model_movie>)
         private val binding = ItemMovieBinding.bind(view)
         var imagen = ""
 
-        fun bind(image:Model_movie){
+        fun bind(image: Model_movie){
             val url_imagen = "https://image.tmdb.org/t/p/w500/${image.poster_path}"
             Picasso.get().load(url_imagen).into(binding.ivMovie)
             binding.txtTitleMovie.setText(image.title)

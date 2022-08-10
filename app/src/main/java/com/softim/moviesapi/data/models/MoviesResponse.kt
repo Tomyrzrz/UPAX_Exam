@@ -1,4 +1,4 @@
-package com.softim.moviesapi.models
+package com.softim.moviesapi.data.models
 
 import com.google.gson.annotations.SerializedName
 

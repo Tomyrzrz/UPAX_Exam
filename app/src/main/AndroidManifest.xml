@@ -28,7 +28,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".Home"
+            android:name=".ui.Home"
             android:exported="true"
             android:label="@string/title_activity_home"
             android:theme="@style/Theme.DogsAPI.NoActionBar">

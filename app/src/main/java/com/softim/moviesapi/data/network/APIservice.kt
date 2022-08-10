@@ -1,6 +1,6 @@
-package com.softim.moviesapi.utilities
+package com.softim.moviesapi.data.network
 
-import com.softim.moviesapi.models.MoviesResponse
+import com.softim.moviesapi.data.models.MoviesResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Url

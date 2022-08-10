@@ -1,4 +1,4 @@
-package com.softim.moviesapi
+package com.softim.moviesapi.ui
 
 import android.os.Bundle
 import android.view.Menu
@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.softim.moviesapi.R
 import com.softim.moviesapi.databinding.ActivityHomeBinding
 
 

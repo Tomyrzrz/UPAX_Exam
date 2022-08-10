@@ -1,4 +1,4 @@
-package com.softim.moviesapi.fragments
+package com.softim.moviesapi.ui.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -22,7 +22,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import com.softim.moviesapi.R
-import com.softim.moviesapi.models.ModelUserLocation
+import com.softim.moviesapi.data.models.ModelUserLocation
 
 class MapsFragment : Fragment() {
     private val bd = Firebase.firestore

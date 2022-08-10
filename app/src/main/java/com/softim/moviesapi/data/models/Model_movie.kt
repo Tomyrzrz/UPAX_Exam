@@ -1,4 +1,4 @@
-package com.softim.moviesapi.models
+package com.softim.moviesapi.data.models
 
 data class Model_movie(var title: String = "",
                        var overview: String = "",
