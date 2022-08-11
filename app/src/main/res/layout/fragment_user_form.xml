@@ -12,6 +12,17 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/txt_title_form_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margins_small"
+            android:gravity="center_horizontal"
+            android:text="@string/txt_title_user_form"
+            android:textColor="@color/purple_500"
+            android:textSize="@dimen/titles"
+            android:textStyle="bold" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_name"
             android:layout_width="match_parent"
@@ -22,12 +33,11 @@
                 android:id="@+id/et_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margins_small"
+                android:layout_margin="@dimen/margins_smaller"
                 android:background="#00BCD4"
-                android:hint="Nombre"
-                android:inputType="textPersonName"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                tools:text="Pedro Lopez" />
+                android:hint="@string/hint_nombre_user_form"
+                android:inputType="textPersonName|textCapWords"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -40,48 +50,89 @@
                 android:id="@+id/et_phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margins_small"
+                android:layout_margin="@dimen/margins_smaller"
                 android:background="#00BCD4"
-                android:hint="Número de teléfono"
-                android:inputType="phone"
-                tools:text="300 444 4444" />
+                android:maxEms="12"
+                android:hint="@string/hint_telefono_user_form"
+                android:inputType="phone" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_specialty"
+            android:id="@+id/til_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_specialty"
+                android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margins_small"
+                android:layout_margin="@dimen/margins_smaller"
                 android:background="#00BCD4"
-                android:hint="Especialidad"
-                android:inputType="text"
-                tools:text="Abogado" />
+                android:hint="@string/hint_correo_user_form"
+                android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_bio"
+            android:id="@+id/til_direccion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin">
 
+
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_bio"
+                android:id="@+id/et_direccion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margins_small"
+                android:layout_margin="@dimen/margins_smaller"
                 android:background="#00BCD4"
                 android:gravity="top|start"
-                android:hint="Biografía"
+                android:hint="@string/hint_direccion_user_form"
                 android:imeOptions="actionDone"
-                android:inputType="text|textMultiLine"
-                tools:text="@string/hello_blank_fragment" />
+                android:inputType="text|textMultiLine|textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@string/img_description"
+                android:id="@+id/img_foto_user"
+                android:layout_margin="@dimen/margins_smaller"
+                android:src="@drawable/tomarfoto"
+                android:scaleType="fitXY"
+                android:layout_marginStart="@dimen/margins_small"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_select_photo_user_form"
+                android:text="@string/btn_select_photo_user_form"
+                android:padding="@dimen/margins_small"
+                android:layout_marginStart="@dimen/margins_small"
+                android:layout_gravity="center_vertical"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_save_user_form"
+                android:text="@string/btn_save_user_form"
+                android:padding="@dimen/padding_small"
+                android:textColor="@color/black"
+                android:backgroundTint="@color/white"
+                android:layout_marginStart="@dimen/margins_medium"
+                android:layout_gravity="center_vertical"/>
+
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rcv_users"
+            />
 
     </LinearLayout>
 

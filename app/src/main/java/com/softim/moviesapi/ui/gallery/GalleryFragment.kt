@@ -205,7 +205,7 @@ class GalleryFragment : Fragment() {
                 ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
             }
     }
-    //com.google.android.gms.tasks.zzw@26fa92c
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

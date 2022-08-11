@@ -9,9 +9,9 @@ import com.softim.moviesapi.R
 class ExceptionDialogFragment(val msj: String) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
+            .setTitle(R.string.title_error)
             .setMessage(msj)
             .setPositiveButton(getString(R.string.ok)) { _,_ ->
-
             }
             .create()
 

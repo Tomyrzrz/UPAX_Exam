@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="btn_location">Location</string>
+    <string name="txt_title_user_form">Formulario de Usuario</string>
 </resources>

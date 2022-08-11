@@ -26,11 +26,6 @@ class MapsFragment : Fragment() {
     private val callback = OnMapReadyCallback { googleMap ->
 
         googleMap.uiSettings.isMyLocationButtonEnabled = true
-        /*val sharedPreferences = activity?.getSharedPreferences("user_movies", AppCompatActivity.MODE_PRIVATE)
-        val user_local = sharedPreferences?.getString("user", "")*/
-        /*bd.collection("moviesAPIuser").document(user_local!!).collection("locations").get()
-            .addOnSuccessListener {
-                if (it != null){*/
 
             val ubica = LatLng(latitud, longitud)
             googleMap.addMarker(

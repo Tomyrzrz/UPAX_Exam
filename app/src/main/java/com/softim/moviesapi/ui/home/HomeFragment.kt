@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
@@ -19,6 +20,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import com.softim.moviesapi.R
 import com.softim.moviesapi.data.models.ExamUPAXDto
 import com.softim.moviesapi.data.models.ModelDirecciones
@@ -29,6 +32,7 @@ import com.softim.moviesapi.utilities.BusinessAdapter
 import com.softim.moviesapi.utilities.BusinessLocalBD
 import com.softim.moviesapi.utilities.ExceptionDialogFragment
 import kotlinx.coroutines.*
+import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -40,9 +44,6 @@ class HomeFragment : Fragment() , BusinessAdapter.onItemClickListener {
 
     private lateinit var adapter: BusinessAdapter
     private val moviesImages = mutableListOf<Model_business>()
-
-    private var bd = Firebase.firestore
-    private lateinit var ref: DocumentReference
     private val CHANNEL_ID = "MOVIESAPI"
 
     override fun onCreateView(
@@ -102,29 +103,29 @@ class HomeFragment : Fragment() , BusinessAdapter.onItemClickListener {
     fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                    return true
-                }
+        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        if (capabilities != null) {
+            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                return true
             }
+        }
 
         return false
     }
 
     private fun searchByName(){
         if (isNetworkAvailable(requireContext())) {
+
             CoroutineScope(Dispatchers.IO).launch {
                 val call = getRetrofit().create(APIservice::class.java).getBusiness(ExamUPAXDto(149010))
                 val list_business = call.body()
-
                 activity?.runOnUiThread {
                     if (call.isSuccessful) {
-                        val admin = BusinessLocalBD(requireContext(), "business", null, 1)
+                        val admin = BusinessLocalBD(requireContext(), "business_bd", null, 1)
                         val bd = admin.writableDatabase
                         val directions = list_business?.bussine?: emptyList()
                         for (direc in directions){
@@ -150,17 +151,18 @@ class HomeFragment : Fragment() , BusinessAdapter.onItemClickListener {
                         moviesImages.clear()
                         moviesImages.addAll(directions)
                         adapter.notifyDataSetChanged()
-                    } else {
+                    } else if (!call.isSuccessful){
                         val message = "We have an error"
                         ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
                     }
                 }
             }
         }else{
-            val admin = BusinessLocalBD(requireContext(),"movies_local", null, 1)
+            val admin = BusinessLocalBD(requireContext(),"business_bd", null, 1)
             val bd = admin.writableDatabase
             val fila = bd.rawQuery("select * from business", null)
             if (fila.moveToFirst()) {
+                moviesImages.clear()
                 do {
                     val imagen: String = fila.getString(1)
                     val nombre: String = fila.getString(2)

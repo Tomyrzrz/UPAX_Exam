@@ -8,7 +8,8 @@
         <item>Latest</item>
         <item>Upcoming</item>
     </string-array>
-    <string name="exception_error">We have a Error</string>
+    <string name="exception_error">Mensaje de la App</string>
+    <string name="title_error">Mensaje App</string>
     <string name="ok">Ok</string>
     <string name="channel_name">Notification Exam</string>
     <string name="channel_description">Notifications Exception</string>
@@ -24,8 +25,21 @@
     <string name="menu_home">Business</string>
     <string name="menu_gallery">Your Gallery Firebase</string>
     <string name="menu_slideshow">Save your Users</string>
+    <string name="menu_map">Google Map</string>
     <string name="txt_upload_your_photo">Upload Your Photo</string>
     <string name="btn_upload_phto">Upload</string>
     <string name="btn_location">Location</string>
     <string name="hello_blank_fragment">Hello people of UPAX</string>
+    <string name="txt_title_user_form">Formulario de Usuario</string>
+    <string name="hint_nombre_user_form">Nombre User</string>
+    <string name="error_nombre_user_form">Nombre de Usuario No Valido</string>
+    <string name="hint_telefono_user_form">Telefono</string>
+    <string name="error_telefono_user_form">Telefono Incorrecto</string>
+    <string name="hint_correo_user_form">Correo electronico</string>
+    <string name="error_correo_user_form">Correo No Valido</string>
+    <string name="hint_direccion_user_form">Direccion</string>
+    <string name="error_direccion_user_form">Direccion Vacia</string>
+    <string name="btn_select_photo_user_form">Elige Foto</string>
+    <string name="btn_save_user_form">Guardar User</string>
+
 </resources>

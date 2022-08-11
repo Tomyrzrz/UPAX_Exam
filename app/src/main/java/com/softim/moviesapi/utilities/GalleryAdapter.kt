@@ -23,7 +23,6 @@ class GalleryAdapter(val images: List<ModelUserImages>)
             Picasso.get().load(image.imagen).into(binding.imgGalleryItem)
         }
 
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): businessViewHolder {
