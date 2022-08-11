@@ -1,13 +1,9 @@
 package com.softim.moviesapi.ui.home
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -15,47 +11,38 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.softim.moviesapi.R
-import com.softim.moviesapi.databinding.FragmentHomeBinding
-import com.softim.moviesapi.data.models.ModelUserLocation
-import com.softim.moviesapi.data.models.Model_movie
+import com.softim.moviesapi.data.models.ExamUPAXDto
+import com.softim.moviesapi.data.models.ModelDirecciones
+import com.softim.moviesapi.data.models.Model_business
 import com.softim.moviesapi.data.network.APIservice
+import com.softim.moviesapi.databinding.FragmentHomeBinding
+import com.softim.moviesapi.utilities.BusinessAdapter
+import com.softim.moviesapi.utilities.BusinessLocalBD
 import com.softim.moviesapi.utilities.ExceptionDialogFragment
-import com.softim.moviesapi.utilities.MoviesAdapter
-import com.softim.moviesapi.utilities.MoviesLocalBD
 import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.M)
-class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
+class HomeFragment : Fragment() , BusinessAdapter.onItemClickListener {
 
     private var _binding: FragmentHomeBinding? = null
 
     private val binding get() = _binding!!
 
-    private lateinit var adapter: MoviesAdapter
-    private val moviesImages = mutableListOf<Model_movie>()
+    private lateinit var adapter: BusinessAdapter
+    private val moviesImages = mutableListOf<Model_business>()
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var bd = Firebase.firestore
     private lateinit var ref: DocumentReference
-    private val TIEMPO = 300000L
     private val CHANNEL_ID = "MOVIESAPI"
 
     override fun onCreateView(
@@ -66,16 +53,29 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         createNotificationChannel()
-        ubicacion()
-        ejecutarTarea()
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        searchByName()
+    }
 
-        binding.spnMovies.onItemSelectedListener = this
+    override fun onButtonImage(ubica: Model_business) {
+        super.onButtonImage(ubica)
+        var longitud= ""
+        var latitud = ""
+        val nombre = ubica.nombre
+        for (bus in ubica.direcciones){
+            longitud = bus.longitud
+            latitud = bus.latitud
+        }
+        val bundle = Bundle()
+        bundle.putDouble("latitud", latitud.toDouble())
+        bundle.putDouble("longitud", longitud.toDouble())
+        bundle.putString("nombre", nombre)
+        Navigation.findNavController(activity!!.parent, R.id.nav_host_fragment_home).navigate(R.id.nav_slideshow, bundle);
     }
 
     override fun onDestroyView() {
@@ -84,7 +84,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
     }
 
     private fun initRecyclerView() {
-        adapter = MoviesAdapter(moviesImages)
+        adapter = BusinessAdapter(moviesImages, this)
         binding.rvMovies.layoutManager = LinearLayoutManager(requireContext())
             .apply {
                 binding.rvMovies.layoutManager = this
@@ -94,7 +94,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/movie/")
+            .baseUrl("https://2mg0a7e51k.execute-api.us-east-1.amazonaws.com/v1/miruta/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -116,29 +116,39 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
         return false
     }
 
-    private fun searchByName(query:String){
+    private fun searchByName(){
         if (isNetworkAvailable(requireContext())) {
             CoroutineScope(Dispatchers.IO).launch {
-                val call = getRetrofit().create(APIservice::class.java)
-                    .getMoviesByBreeds("$query?api_key=e8a82c4e3f0e112131ea103fade4eb93")
-                val list_movies = call.body()
+                val call = getRetrofit().create(APIservice::class.java).getBusiness(ExamUPAXDto(149010))
+                val list_business = call.body()
 
                 activity?.runOnUiThread {
                     if (call.isSuccessful) {
-                        val pelis = list_movies?.movies ?: emptyList()
-                        val admin = MoviesLocalBD(requireContext(),"movies_local", null, 1)
+                        val admin = BusinessLocalBD(requireContext(), "business", null, 1)
                         val bd = admin.writableDatabase
-                        for (pel in pelis){
+                        val directions = list_business?.bussine?: emptyList()
+                        for (direc in directions){
                             val registro = ContentValues()
-                            registro.put("title", pel.title)
-                            registro.put("overview", pel.overview)
-                            registro.put("poster_path", pel.poster_path)
-                            registro.put("vote_average", pel.vote_average)
-                            bd.insert("peliculas", null, registro)
+                            registro.put("imagen", direc.urlImagen)
+                            registro.put("nombre", direc.nombre)
+                            for (dir in direc.direcciones){
+                                registro.put("calle", dir.calle)
+                                registro.put("numeroExterior", dir.numeroExterior)
+                                registro.put("numeroInterior", dir.numeroInterior)
+                                registro.put("codigoPostal", dir.codigoPostal)
+                                registro.put("colonia", dir.colonia)
+                                registro.put("nombrePais", dir.nombrePais)
+                                registro.put("nombreEstado", dir.nombreEstado)
+                                registro.put("nombreMunicipio", dir.nombreMunicipio)
+                                registro.put("latitud", dir.latitud)
+                                registro.put("longitud", dir.longitud)
+                            }
+
+                            bd.insert("business", null, registro)
                         }
                         bd.close()
                         moviesImages.clear()
-                        moviesImages.addAll(pelis)
+                        moviesImages.addAll(directions)
                         adapter.notifyDataSetChanged()
                     } else {
                         val message = "We have an error"
@@ -147,17 +157,19 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
                 }
             }
         }else{
-            val admin = MoviesLocalBD(requireContext(),"movies_local", null, 1)
+            val admin = BusinessLocalBD(requireContext(),"movies_local", null, 1)
             val bd = admin.writableDatabase
-            val fila = bd.rawQuery("select title, overview, poster_path, vote_average from peliculas", null)
+            val fila = bd.rawQuery("select * from business", null)
             if (fila.moveToFirst()) {
                 do {
-                    val title: String = fila.getString(0)
-                    val overview: String = fila.getString(1)
-                    val poster_path: String = fila.getString(2)
-                    val vote_average: Double = fila.getDouble(3)
-                    val movie = Model_movie(title, overview, poster_path, vote_average)
-                    moviesImages.add(movie)
+                    val imagen: String = fila.getString(1)
+                    val nombre: String = fila.getString(2)
+                    val direcciones : MutableList<ModelDirecciones> = mutableListOf()
+                    direcciones.add(ModelDirecciones(fila.getString(3), fila.getString(4) , fila.getString(5),
+                        fila.getString(6), fila.getString(7), fila.getString(8), fila.getString(9), fila.getString(10),
+                        fila.getString(11), fila.getString(12)))
+                    val bus = Model_business(imagen, nombre, direcciones)
+                    moviesImages.add(bus)
                     adapter.notifyDataSetChanged()
                 } while (fila.moveToNext())
             }else{
@@ -169,83 +181,13 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
 
     }
 
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        val texto = p0?.selectedItem.toString()
-        searchByName(texto.lowercase(Locale.ROOT))
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {
-        val message = "Select Breed of Dog."
-        ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
-    }
-
-
-    private fun ubicacion() {
-        val locationPermissionRequest = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                when {
-                    permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
-                        if (ActivityCompat.checkSelfPermission(
-                                requireContext(),
-                                Manifest.permission.ACCESS_FINE_LOCATION
-                            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                                requireContext(),
-                                Manifest.permission.ACCESS_COARSE_LOCATION
-                            ) == PackageManager.PERMISSION_GRANTED
-                        ) {
-                            fusedLocationClient.lastLocation
-                                .addOnSuccessListener { location: Location? ->
-                                    mensaje(location)
-                                }
-                        }
-                    }
-                    permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                        fusedLocationClient.lastLocation
-                            .addOnSuccessListener { location: Location? ->
-                                mensaje(location)
-                            }
-                    }
-                    else -> {
-                        notificar()
-                    }
-                }
-            }
-        }
-        locationPermissionRequest.launch(arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.READ_EXTERNAL_STORAGE))
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun reubicate(){
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                mensaje(location)
-            }
-    }
-
-
-    private fun ejecutarTarea() {
-        GlobalScope.launch(Dispatchers.Main) {
-            while(true) {
-                delay(TIEMPO)
-                reubicate()
-            }
-        }
-    }
 
     private fun notificar() {
         val message = "You must be granted the permission of location."
         ExceptionDialogFragment(message).show(parentFragmentManager, ExceptionDialogFragment.TAG)
-        ubicacion()
     }
 
-    private fun mensaje(location: Location?) {
+    /*private fun mensaje(location: Location?) {
         val sharedPreferences = activity?.getSharedPreferences("user_movies", AppCompatActivity.MODE_PRIVATE)
         val user_local = sharedPreferences?.getString("user", "")
         val uniqueID = UUID.randomUUID().toString()
@@ -269,7 +211,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
                 val message = "Upload Location Failed"
                 notificationLocation(message)
             }
-    }
+    }*/
+
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = getString(R.string.channel_name)
@@ -287,7 +230,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener  {
     private fun notificationLocation(msj: String){
         val builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("Your Location")
+            .setContentTitle("Your Exception is")
             .setContentText(msj)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
         with(NotificationManagerCompat.from(requireContext())) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="titles">24sp</dimen>
-    <dimen name="texts">18sp</dimen>
+    <dimen name="texts">14sp</dimen>
     <dimen name="margins_small">8dp</dimen>
     <dimen name="margins_medium">16dp</dimen>
     <dimen name="margins_big">24dp</dimen>
